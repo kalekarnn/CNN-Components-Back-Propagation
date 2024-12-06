@@ -11,7 +11,7 @@ def test_model_parameters():
     # Test total parameter count
     model = Net()
     total_params = sum(p.numel() for p in model.parameters())
-    assert total_params < 100000, "Model has too many parameters"
+    assert total_params < 20000, "Model has too many parameters"
 
 def test_batch_normalization():
     # Test presence of batch normalization
@@ -39,3 +39,12 @@ def test_final_layer():
     last_layers = list(model.modules())[-3:]  # Check last few layers
     has_gap = any(isinstance(layer, torch.nn.AdaptiveAvgPool2d) for layer in last_layers)
     assert has_gap, "Model should end with either Global Average Pooling or Fully Connected layer"
+
+def test_accuracy():
+    """Test if model achieves accuracy above 99.4%"""
+    try:
+        with open('final_accuracy.txt', 'r') as f:
+            accuracy = float(f.read().strip())
+        assert accuracy >= 99.4, f"Model accuracy {accuracy}% should be greater than 99.4%"
+    except FileNotFoundError:
+        assert False, "final_accuracy.txt file not found. Make sure the notebook saves the final accuracy."
