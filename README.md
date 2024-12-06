@@ -1,5 +1,57 @@
 # CNN-Components-Back-Propagation
 
+## Model Requirements Checks
+
+| Requirement | Status |
+|------------|---------|
+| Parameters < 20k | ![Test Status](https://github.com/kalekarnn/CNN-Components-Back-Propagation/actions/workflows/pipeline.yml/badge.svg?event=push&label=parameters) |
+| Batch Normalization | ![Test Status](https://github.com/kalekarnn/CNN-Components-Back-Propagation/actions/workflows/pipeline.yml/badge.svg?event=push&label=batch-norm) |
+| Dropout | ![Test Status](https://github.com/kalekarnn/CNN-Components-Back-Propagation/actions/workflows/pipeline.yml/badge.svg?event=push&label=dropout) |
+| GAP/FC Layer | ![Test Status](https://github.com/kalekarnn/CNN-Components-Back-Propagation/actions/workflows/pipeline.yml/badge.svg?event=push&label=architecture) |
+| Accuracy > 99.4% | ![Test Status](https://github.com/kalekarnn/CNN-Components-Back-Propagation/actions/workflows/pipeline.yml/badge.svg?event=push&label=accuracy) |
+
+
+## Model Architecture
+
+```
+        self.conv1 = nn.Sequential(
+          nn.Conv2d(1, 32, 5, padding=1),
+          nn.ReLU(),
+          nn.BatchNorm2d(32),
+          nn.Dropout(0.05),
+          nn.Conv2d(32, 24, 3, stride=1, padding=1),
+          nn.ReLU(),
+          nn.BatchNorm2d(24),
+          nn.Dropout(0.1)
+        )
+
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(24, 16, 3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(16),
+            nn.Dropout(0.1)
+        )
+
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(16, 24, 3, stride=2, padding=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(24),
+            nn.Dropout(0.1)
+        )
+
+        self.conv4 = nn.Sequential(
+              nn.Conv2d(24,16,3,stride=1,padding=1),
+              nn.ReLU(),
+              nn.BatchNorm2d(16)
+          )
+
+
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(16, 10, 3, stride=1)
+        )
+
+        self.gap = nn.AvgPool2d(5)
+```
 
 ## Model Summary 
 
