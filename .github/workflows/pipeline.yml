@@ -85,6 +85,6 @@ jobs:
         retention-days: 5
 
 
-      - name: Run tests
-        run: |
-          pytest tests/test_assignment_6.py
+    - name: Run tests
+      run: |
+        pytest tests/test_assignment_6.py
