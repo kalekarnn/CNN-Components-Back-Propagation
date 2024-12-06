@@ -1,0 +1,88 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nbconvert pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+
+    - name: Convert and Execute Notebook
+      run: |
+        # Convert notebook to python script
+        jupyter nbconvert --to python assignment_6.ipynb
+        
+        # Create a temporary file for modifications
+        cat > temp_script.py << 'EOF'
+        from __future__ import print_function
+        import torch
+        import torch.nn as nn
+        import torch.optim as optim
+        import torchvision
+        import torchvision.transforms as transforms
+        from torchsummary import summary
+        from tqdm import tqdm
+        import re
+
+        def save_accuracy(log_line):
+            if "Test set: Average loss:" in log_line:
+                # Extract accuracy using regex
+                match = re.search(r'Accuracy: \d+/\d+ \((\d+\.\d+)%\)', log_line)
+                if match:
+                    accuracy = float(match.group(1))
+                    with open('final_accuracy.txt', 'w') as f:
+                        f.write(str(accuracy))
+
+        # Store the original print function
+        original_print = print
+
+        # Define a new print function that also checks for accuracy
+        def custom_print(*args, **kwargs):
+            line = " ".join(map(str, args))
+            save_accuracy(line)
+            original_print(*args, **kwargs)
+
+        # Replace the built-in print function
+        print = custom_print
+        EOF
+        
+        # Append the converted notebook code after removing IPython commands and __future__ imports
+        sed '/get_ipython\|from __future__/d' assignment_6.py >> temp_script.py
+        
+        # Replace original file with modified version
+        mv temp_script.py assignment_6.py
+        
+        # Execute the script
+        python assignment_6.py
+        
+    - name: Run tests
+      run: |
+        pytest tests/test_assignment_6.py
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          final_accuracy.txt
+          test-results.xml
+        retention-days: 5
