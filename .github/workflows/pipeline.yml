@@ -51,8 +51,18 @@ jobs:
                 match = re.search(r'Accuracy: \d+/\d+ \((\d+\.\d+)%\)', log_line)
                 if match:
                     accuracy = float(match.group(1))
-                    with open('final_accuracy.txt', 'w') as f:
-                        f.write(str(accuracy))
+                    try:
+                        # Read the current max accuracy
+                        with open('final_accuracy.txt', 'r') as f:
+                            max_accuracy = float(f.read().strip())
+                    except (FileNotFoundError, ValueError):
+                        # If file doesn't exist or is invalid, initialize with 0
+                        max_accuracy = 0.0
+                    
+                    # Update the file only if the current accuracy is higher
+                    if accuracy > max_accuracy:
+                        with open('final_accuracy.txt', 'w') as f:
+                            f.write(str(accuracy))
 
         # Store the original print function
         original_print = print
