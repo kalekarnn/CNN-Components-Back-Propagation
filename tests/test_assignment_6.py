@@ -38,5 +38,4 @@ def test_final_layer():
     model = Net()
     last_layers = list(model.modules())[-3:]  # Check last few layers
     has_gap = any(isinstance(layer, torch.nn.AdaptiveAvgPool2d) for layer in last_layers)
-    has_fc = any(isinstance(layer, torch.nn.Linear) for layer in last_layers)
-    assert has_gap or has_fc, "Model should end with either Global Average Pooling or Fully Connected layer"
+    assert has_gap, "Model should end with either Global Average Pooling or Fully Connected layer"
