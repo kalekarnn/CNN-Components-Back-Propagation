@@ -42,18 +42,17 @@ jobs:
         from tqdm import tqdm
         import re
 
+        with open('final_accuracy.txt', 'w') as f:
+            f.write('0.0')
+
         def save_accuracy(log_line):
-            echo "Checking line for accuracy: ${log_line}"  # Debug echo
             if "Test set: Average loss:" in log_line:
-                echo "Found test set line!"  # Debug echo
                 # Extract accuracy using regex
                 match = re.search(r'Accuracy: \d+/\d+ \((\d+\.\d+)%\)', log_line)
                 if match:
                     accuracy = float(match.group(1))
-                    echo "Found accuracy: ${accuracy}"  # Debug echo
                     with open('final_accuracy.txt', 'w') as f:
                         f.write(str(accuracy))
-                        echo "Wrote accuracy to file"  # Debug echo
 
         # Store the original print function
         original_print = print
